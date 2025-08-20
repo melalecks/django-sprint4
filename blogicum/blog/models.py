@@ -101,13 +101,13 @@ class Comment(PublishedModel):
         Post,
         on_delete=models.CASCADE,
         verbose_name='Пост',
-        related_name='comments'
     )
 
     class Meta:
         verbose_name = 'комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ('created_at',)
+        default_related_name = 'comments'
 
     def __str__(self):
         return self.text[:50]
