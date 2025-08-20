@@ -23,7 +23,7 @@ urlpatterns = [
          name='category_posts'),
     path('profile/edit/', views.UserUpdateView.as_view(),
          name='edit_profile'),
-    path('profile/<slug:username>/', views.ProfileListView.as_view(),
+    path('profile/<str:username>/', views.ProfileListView.as_view(),
          name='profile'),
     path('posts/create/', views.PostCreateView.as_view(), name='create_post'),
 ]
