@@ -55,8 +55,8 @@ class PostDetailView(DetailView):
         post = super().get_object()
         if post.author == self.request.user:
             return post
-        published_posts = posts_handler(annotate_comments=False)
-        return super().get_object(published_posts)
+        return super().get_object(posts_handler(annotate_comments=False,
+                                                select_related=False))
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs,
@@ -85,17 +85,17 @@ class PostMixin():
         if self.get_object().author != request.user:
             return redirect(
                 'blog:post_detail',
-                post_id=self.kwargs['post_id']
+                self.kwargs[self.pk_url_kwarg]
             )
         return super().dispatch(request, *args, **kwargs)
 
 
 class PostUpdateView(PostMixin, LoginRequiredMixin, UpdateView):
     form_class = PostForm
-    pk_url_kwarg = 'post_id'
 
     def get_success_url(self):
-        return reverse('blog:post_detail', args=[self.kwargs['post_id']])
+        return reverse('blog:post_detail',
+                       args=[self.kwargs[self.pk_url_kwarg]])
 
 
 class PostDeleteView(PostMixin, LoginRequiredMixin, DeleteView):
@@ -118,7 +118,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('blog:post_detail',
-                       kwargs={'post_id': self.kwargs['post_id']})
+                       args=[self.kwargs['post_id']])
 
 
 class CommentMixin():
